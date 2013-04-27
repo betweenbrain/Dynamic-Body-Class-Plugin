@@ -23,10 +23,7 @@ class plgSystemDynamic_body_class extends JPlugin {
 			return FALSE;
 		}
 
-		$buffer = JResponse::getBody();
-
-		$mode = $this->params->get('mode');
-
+		$buffer  = JResponse::getBody();
 		$classes = implode(' ', $this->generateClasses());
 
 		preg_match_all('/<body[^>]*class="([a-zA-Z0-9-_ ]*)"[^>]*>/', $buffer, $matches, PREG_SET_ORDER);
@@ -40,36 +37,23 @@ class plgSystemDynamic_body_class extends JPlugin {
 
 	function generateClasses() {
 
-		// To get an application object
+		// Application object
 		$app = JFactory::getApplication();
-
-		// Returns a reference to the global language object
+		// Global language object
 		$lang = JFactory::getLanguage();
-
-		// Returns a reference to the menu object
+		// Menu object
 		$menu = $app->getMenu();
-
-		// Get the current view
+		// Class type mode
+		$mode = $this->params->get('mode');
+		// Current view
 		$view = JRequest::getCmd('view');
-
-		// The default menu item
+		// Default menu item
 		$default = $menu->getActive() == $menu->getDefault($lang->getTag());
-
-		if ($default) {
-			$classes[] = 'default';
-		}
-
-		// Component Name
-		$classes[] = JRequest::getCmd('option');
-
 		// Item ID
 		$itemId = JRequest::getInt('Itemid', 0);
-
-		$classes[] = 'item-' . $itemId;
-
 		// Article ID
 		if ($view == 'article') {
-			$classes[] = 'article-' . JRequest::getInt('id');
+			$articleId = JRequest::getInt('id');
 		}
 
 		// Section ID
@@ -93,11 +77,7 @@ class plgSystemDynamic_body_class extends JPlugin {
 			}
 		}
 
-		$secId = getSection(JRequest::getInt('id'));
-
-		if ($secId) {
-			$classes[] = 'section-' . $secId;
-		}
+		$sectionId = getSection(JRequest::getInt('id'));
 
 		// Category ID
 		function getCategory($id) {
@@ -115,10 +95,57 @@ class plgSystemDynamic_body_class extends JPlugin {
 			}
 		}
 
-		$catId = getCategory(JRequest::getInt('id'));
+		$categoryId = getCategory(JRequest::getInt('id'));
 
-		if ($catId) {
-			$classes[] = 'category-' . $catId;
+		/*
+		 * Build array of classes
+		 */
+
+		// Component Name
+		$classes[] = JRequest::getCmd('option');
+
+		if ($default) {
+			$classes[] = 'default';
+		}
+
+		switch ($mode) {
+			case 'id':
+				// Item
+				$classes[] = 'item-' . $itemId;
+				// Article
+				if ($articleId) {
+					$classes[] = 'article-' . $articleId;
+				}
+				// Section
+				if ($sectionId) {
+					$classes[] = 'section-' . $sectionId;
+				}
+				// Category
+				if ($categoryId) {
+					$classes[] = 'category-' . $categoryId;
+				}
+				break;
+			case 'alias':
+				// Item
+				$classes[] = $menu->getItem($itemId)->alias;
+				// Article
+				if ($articleId) {
+					$article =& JTable::getInstance("content");
+					$article->load($articleId);
+					$classes[] = $article->get('alias');
+				}
+				// Section
+				if ($sectionId) {
+					$section =& JTable::getInstance("section");
+					$section->load($sectionId);
+					$classes[] = $section->get('alias');
+				}
+				// Category
+				if ($categoryId) {
+					$category =& JTable::getInstance("category");
+					$category->load($categoryId);
+					$classes[] = $category->get('alias');
+				}
 		}
 
 		// Menu item alias
