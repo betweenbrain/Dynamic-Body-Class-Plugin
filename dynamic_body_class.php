@@ -148,11 +148,6 @@ class plgSystemDynamic_body_class extends JPlugin {
 				}
 		}
 
-		// Menu item alias
-		if ($itemId) {
-			$classes[] = $app->getMenu()->getActive()->alias;
-		}
-
 		return $classes;
 	}
 }
