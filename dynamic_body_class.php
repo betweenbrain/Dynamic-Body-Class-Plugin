@@ -146,6 +146,7 @@ class plgSystemDynamic_body_class extends JPlugin {
 					$category->load($categoryId);
 					$classes[] = $category->get('alias');
 				}
+				break;
 		}
 
 		return $classes;
