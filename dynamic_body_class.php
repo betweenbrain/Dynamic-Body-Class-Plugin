@@ -26,9 +26,13 @@ class plgSystemDynamic_body_class extends JPlugin {
 		$buffer  = JResponse::getBody();
 		$classes = implode(' ', $this->generateClasses());
 
-		preg_match_all('/<body[^>]*class="([a-zA-Z0-9-_ ]*)"[^>]*>/', $buffer, $matches, PREG_SET_ORDER);
+		preg_match('/<body([^>]*)>/', $buffer, $body);
 
-		$buffer = str_replace($matches[0][1], $matches[0][1] . ' ' . $classes, $buffer);
+		if (preg_match('/class="([a-zA-Z0-9-_ ]*)"/', $body[1], $class)) {
+			$buffer = str_replace($class[1], $class[1] . ' ' . $classes, $buffer);
+		} else {
+			$buffer = str_replace('<body', '<body class="' . $classes . '" ', $buffer);
+		}
 
 		JResponse::setBody($buffer);
 
