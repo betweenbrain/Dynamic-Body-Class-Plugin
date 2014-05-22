@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<install version="2.5" type="plugin" group="system" method="upgrade">
+<extension version="2.5" type="plugin" group="system" method="upgrade">
 	<name>System - Dynamic Body Class</name>
 	<author>Matt Thomas</author>
 	<creationDate>April 26, 2013</creationDate>
@@ -12,19 +12,11 @@
 	<files>
 		<filename plugin="dynamic_body_class">dynamic_body_class.php</filename>
 	</files>
+
 	<languages>
 		<language tag="en-GB">en-GB.plg_system_dynamic_body_class.ini</language>
 	</languages>
-	<params>
-		<param name="mode"
-		       type="list"
-		       default="id"
-		       label="PLG_DYNAMIC_BODY_CLASS_FEED_LABEL"
-		       description="PLG_DYNAMIC_BODY_CLASS_FEED_DESC">
-			<option value="id">ID</option>
-			<option value="alias">Alias</option>
-		</param>
-	</params>
+
 	<config>
 		<fields name="params">
 			<fieldset name="basic">
@@ -39,4 +31,4 @@
 			</fieldset>
 		</fields>
 	</config>
-</install>
+</extension>
