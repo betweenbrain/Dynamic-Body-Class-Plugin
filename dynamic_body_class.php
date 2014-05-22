@@ -13,14 +13,17 @@
 
 jimport('joomla.plugin.plugin');
 
-class plgSystemDynamic_body_class extends JPlugin {
+class plgSystemDynamic_body_class extends JPlugin
+{
 
-	function onAfterRender() {
+	function onAfterRender()
+	{
 
 		$app = JFactory::getApplication();
 
-		if ($app->isAdmin()) {
-			return FALSE;
+		if ($app->isAdmin())
+		{
+			return false;
 		}
 
 		$buffer  = JResponse::getBody();
@@ -28,18 +31,22 @@ class plgSystemDynamic_body_class extends JPlugin {
 
 		preg_match('/<body([^>]*)>/', $buffer, $body);
 
-		if (preg_match('/class="([a-zA-Z0-9-_ ]*)"/', $body[1], $class)) {
+		if (preg_match('/class="([a-zA-Z0-9-_ ]*)"/', $body[1], $class))
+		{
 			$buffer = str_replace($class[1], $class[1] . ' ' . $classes, $buffer);
-		} else {
+		}
+		else
+		{
 			$buffer = str_replace('<body', '<body class="' . $classes . '" ', $buffer);
 		}
 
 		JResponse::setBody($buffer);
 
-		return TRUE;
+		return true;
 	}
 
-	function generateClasses() {
+	function generateClasses()
+	{
 
 		// Application object
 		$app = JFactory::getApplication();
@@ -56,23 +63,32 @@ class plgSystemDynamic_body_class extends JPlugin {
 		// Item ID
 		$itemId = JRequest::getInt('Itemid', 0);
 		// Article ID
-		if ($view == 'article') {
+		if ($view == 'article')
+		{
 			$articleId = JRequest::getInt('id');
 		}
 
 		// Section ID
-		function getSection($id) {
+		function getSection($id)
+		{
 			$database = JFactory::getDBO();
-			if ((substr(JVERSION, 0, 3) >= '1.6')) {
-				return NULL;
-			} elseif (JRequest::getCmd('view', 0) == "section") {
+			if ((substr(JVERSION, 0, 3) >= '1.6'))
+			{
+				return null;
+			}
+			elseif (JRequest::getCmd('view', 0) == "section")
+			{
 				return $id;
-			} elseif (JRequest::getCmd('view', 0) == "category") {
+			}
+			elseif (JRequest::getCmd('view', 0) == "category")
+			{
 				$sql = "SELECT section FROM #__categories WHERE id = $id ";
 				$database->setQuery($sql);
 
 				return $database->loadResult();
-			} elseif (JRequest::getCmd('view', 0) == "article") {
+			}
+			elseif (JRequest::getCmd('view', 0) == "article")
+			{
 				$temp = explode(":", $id);
 				$sql  = "SELECT sectionid FROM #__content WHERE id = " . $temp[0];
 				$database->setQuery($sql);
@@ -84,13 +100,19 @@ class plgSystemDynamic_body_class extends JPlugin {
 		$sectionId = getSection(JRequest::getInt('id'));
 
 		// Category ID
-		function getCategory($id) {
+		function getCategory($id)
+		{
 			$database = JFactory::getDBO();
-			if (JRequest::getCmd('view', 0) == "section") {
-				return NULL;
-			} elseif ((JRequest::getCmd('view', 0) == "category") || (JRequest::getCmd('view', 0) == "categories")) {
+			if (JRequest::getCmd('view', 0) == "section")
+			{
+				return null;
+			}
+			elseif ((JRequest::getCmd('view', 0) == "category") || (JRequest::getCmd('view', 0) == "categories"))
+			{
 				return $id;
-			} elseif (JRequest::getCmd('view', 0) == "article") {
+			}
+			elseif (JRequest::getCmd('view', 0) == "article")
+			{
 				$temp = explode(":", $id);
 				$sql  = "SELECT catid FROM #__content WHERE id = " . $temp[0];
 				$database->setQuery($sql);
@@ -108,24 +130,29 @@ class plgSystemDynamic_body_class extends JPlugin {
 		// Component Name
 		$classes[] = JRequest::getCmd('option');
 
-		if ($default) {
+		if ($default)
+		{
 			$classes[] = 'default';
 		}
 
-		switch ($mode) {
+		switch ($mode)
+		{
 			case 'id':
 				// Item
 				$classes[] = 'item-' . $itemId;
 				// Article
-				if ($articleId) {
+				if ($articleId)
+				{
 					$classes[] = 'article-' . $articleId;
 				}
 				// Section
-				if ($sectionId) {
+				if ($sectionId)
+				{
 					$classes[] = 'section-' . $sectionId;
 				}
 				// Category
-				if ($categoryId) {
+				if ($categoryId)
+				{
 					$classes[] = 'category-' . $categoryId;
 				}
 				break;
@@ -133,19 +160,22 @@ class plgSystemDynamic_body_class extends JPlugin {
 				// Item
 				$classes[] = $menu->getItem($itemId)->alias;
 				// Article
-				if ($articleId) {
+				if ($articleId)
+				{
 					$article =& JTable::getInstance("content");
 					$article->load($articleId);
 					$classes[] = $article->get('alias');
 				}
 				// Section
-				if ($sectionId) {
+				if ($sectionId)
+				{
 					$section =& JTable::getInstance("section");
 					$section->load($sectionId);
 					$classes[] = $section->get('alias');
 				}
 				// Category
-				if ($categoryId) {
+				if ($categoryId)
+				{
 					$category =& JTable::getInstance("category");
 					$category->load($categoryId);
 					$classes[] = $category->get('alias');
